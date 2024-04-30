@@ -59,7 +59,8 @@ EdLink::School.find(id: 'e8b207c7-7b80-477c-ae7b-6020de91d46f')
 #     :$request=>"e6e5a17f-cc84-46ee-91bb-9bec990444f9"
 #   }
 
-# Using params
+# Returns only the "name" and "id" fields for schools whose name starts
+# with the letter "z":
 params: {
   fields: 'name, id',
   filter: {
@@ -71,9 +72,6 @@ params: {
     ]
   }
 }
-
-# Returns only the "name" and "id" fields for schools whose name starts
-# with the letter "z":
 EdLink::School.all(params: params)
 #=> {
 #     :$data=> [
