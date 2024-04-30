@@ -6,15 +6,15 @@ A very thin wrapper around the [EdLink Graph API (v2)](https://ed.link/docs/api/
 
 Add this line to your application's Gemfile:
 
-  $ gem 'ed_link'
+    $ gem 'ed_link'
 
 And then execute:
 
-  $ bundle install
+    $ bundle install
 
 Or install it yourself as:
 
-  $ gem install ed_link
+    $ gem install ed_link
 
 ## Configuration
 API keys must be configured in the gem setup. You can do this anywhere in your application before you make API calls using the gem.
