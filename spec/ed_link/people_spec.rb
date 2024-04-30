@@ -3,22 +3,27 @@
 RSpec.describe EdLink::People do
   let(:method) { :get }
 
+  before do
+    expect(EdLink::People).to receive(:request).with(method: method, path: path, params:params)
+  end
+
   describe '#agents' do
     let(:id) { 123456 }
     let(:path) { "/people/#{id}/agents" }
 
-    context 'when not filtering' do
-      let(:filter) { {} }
+    context 'with no params' do
+      let(:params) { {} }
 
       it 'calls the correct API endpoint' do
-        expect(EdLink::People).to receive(:request).with(method: method, path: path, filter:filter)
         EdLink::People.agents(id: id)
       end
     end
 
-    context 'when filtering' do
-      let(:filter) do
+    context 'with params' do
+      let(:params) do
         {
+          fields: 'relationship, id',
+          filter: {
             relationship: [
               {
                 operator: 'equals',
@@ -26,11 +31,11 @@ RSpec.describe EdLink::People do
               }
             ]
           }
+        }
       end
       
       it 'calls the API endpoint with the proper params' do
-        expect(EdLink::People).to receive(:request).with(method: method, path: path, filter: filter)
-        EdLink::People.agents(id: id, filter: filter)
+        EdLink::People.agents(id: id, params: params)
       end
     end
   end
@@ -38,18 +43,19 @@ RSpec.describe EdLink::People do
   describe '#all' do
     let(:path) { '/people' }
 
-    context 'when not filtering' do
-      let(:filter) { {} }
+    context 'with no params' do
+      let(:params) { {} }
 
       it 'calls the correct API endpoint' do
-        expect(EdLink::People).to receive(:request).with(method: method, path: path, filter: filter)
         EdLink::People.all
       end
     end
 
-    context 'when filtering' do
-      let(:filter) do
+    context 'with params' do
+      let(:params) do
         {
+          fields: 'first_name, last_name',
+          filter: {
             first_name: [
               {
                 operator: 'starts with',
@@ -57,11 +63,11 @@ RSpec.describe EdLink::People do
               }
             ]
           }
+        }
       end
       
       it 'calls the API endpoint with the proper params' do
-        expect(EdLink::People).to receive(:request).with(method: method, path: path, filter: filter)
-        EdLink::People.all(filter: filter)
+        EdLink::People.all(params: params)
       end
     end
   end
@@ -70,18 +76,19 @@ RSpec.describe EdLink::People do
     let(:id) { 123456 }
     let(:path) { "/people/#{id}/classes" }
 
-    context 'when not filtering' do
-      let(:filter) { {} }
+    context 'with no params' do
+      let(:params) { {} }
 
       it 'calls the correct API endpoint' do
-        expect(EdLink::People).to receive(:request).with(method: method, path: path, filter:filter)
         EdLink::People.classes(id: id)
       end
     end
 
-    context 'when filtering' do
-      let(:filter) do
+    context 'with params' do
+      let(:params) do
         {
+          fields: 'name, id',
+          filter: {
             name: [
               {
                 operator: 'starts with',
@@ -89,11 +96,11 @@ RSpec.describe EdLink::People do
               }
             ]
           }
+        }
       end
       
       it 'calls the API endpoint with the proper params' do
-        expect(EdLink::People).to receive(:request).with(method: method, path: path, filter: filter)
-        EdLink::People.classes(id: id, filter: filter)
+        EdLink::People.classes(id: id, params: params)
       end
     end
   end
@@ -102,18 +109,19 @@ RSpec.describe EdLink::People do
     let(:id) { 123456 }
     let(:path) { "/people/#{id}/districts" }
 
-    context 'when not filtering' do
-      let(:filter) { {} }
+    context 'with no params' do
+      let(:params) { {} }
 
       it 'calls the correct API endpoint' do
-        expect(EdLink::People).to receive(:request).with(method: method, path: path, filter:filter)
         EdLink::People.districts(id: id)
       end
     end
 
-    context 'when filtering' do
-      let(:filter) do
+    context 'with params' do
+      let(:params) do
         {
+          fields: 'name, id',
+          filter: {
             name: [
               {
                 operator: 'starts with',
@@ -121,11 +129,11 @@ RSpec.describe EdLink::People do
               }
             ]
           }
+        }
       end
       
       it 'calls the API endpoint with the proper params' do
-        expect(EdLink::People).to receive(:request).with(method: method, path: path, filter: filter)
-        EdLink::People.districts(id: id, filter: filter)
+        EdLink::People.districts(id: id, params: params)
       end
     end
   end
@@ -134,18 +142,19 @@ RSpec.describe EdLink::People do
     let(:id) { 123456 }
     let(:path) { "/people/#{id}/enrollments" }
 
-    context 'when not filtering' do
-      let(:filter) { {} }
+    context 'with no params' do
+      let(:params) { {} }
 
       it 'calls the correct API endpoint' do
-        expect(EdLink::People).to receive(:request).with(method: method, path: path, filter:filter)
         EdLink::People.enrollments(id: id)
       end
     end
 
-    context 'when filtering' do
-      let(:filter) do
+    context 'with params' do
+      let(:params) do
         {
+          fields: 'role, id',
+          filter: {
             role: [
               {
                 operator: 'equals',
@@ -153,11 +162,11 @@ RSpec.describe EdLink::People do
               }
             ]
           }
+        }
       end
       
       it 'calls the API endpoint with the proper params' do
-        expect(EdLink::People).to receive(:request).with(method: method, path: path, filter: filter)
-        EdLink::People.enrollments(id: id, filter: filter)
+        EdLink::People.enrollments(id: id, params: params)
       end
     end
   end
@@ -166,9 +175,22 @@ RSpec.describe EdLink::People do
     let(:id) { 123456 }
     let(:path) { "/people/#{id}" }
 
-    it 'calls the correct API endpoint' do
-      expect(EdLink::People).to receive(:request).with(method: method, path: path)
-      EdLink::People.find(id: id)
+    context 'with no params' do
+      let(:params) { {} }
+    
+      it 'calls the correct API endpoint' do
+        EdLink::People.find(id: id)
+      end
+    end
+
+    context 'with params' do
+      let(:params) do
+        { fields: 'first_name, last_name' }
+      end
+      
+      it 'calls the API endpoint with the proper params' do
+        EdLink::People.find(id: id, params: params)
+      end
     end
   end
 
@@ -176,18 +198,19 @@ RSpec.describe EdLink::People do
     let(:id) { 123456 }
     let(:path) { "/people/#{id}/schools" }
 
-    context 'when not filtering' do
-      let(:filter) { {} }
+    context 'with no params' do
+      let(:params) { {} }
 
       it 'calls the correct API endpoint' do
-        expect(EdLink::People).to receive(:request).with(method: method, path: path, filter:filter)
         EdLink::People.schools(id: id)
       end
     end
 
-    context 'when filtering' do
-      let(:filter) do
+    context 'with params' do
+      let(:params) do
         {
+          fields: 'name, id',
+          filter: {
             name: [
               {
                 operator: 'starts with',
@@ -195,11 +218,11 @@ RSpec.describe EdLink::People do
               }
             ]
           }
+        }
       end
       
       it 'calls the API endpoint with the proper params' do
-        expect(EdLink::People).to receive(:request).with(method: method, path: path, filter: filter)
-        EdLink::People.schools(id: id, filter: filter)
+        EdLink::People.schools(id: id, params: params)
       end
     end
   end
@@ -208,18 +231,19 @@ RSpec.describe EdLink::People do
     let(:id) { 123456 }
     let(:path) { "/people/#{id}/sections" }
 
-    context 'when not filtering' do
-      let(:filter) { {} }
+    context 'with no params' do
+      let(:params) { {} }
 
       it 'calls the correct API endpoint' do
-        expect(EdLink::People).to receive(:request).with(method: method, path: path, filter:filter)
         EdLink::People.sections(id: id)
       end
     end
 
-    context 'when filtering' do
-      let(:filter) do
+    context 'with params' do
+      let(:params) do
         {
+          fields: 'name, id',
+          filter: {
             name: [
               {
                 operator: 'starts with',
@@ -227,11 +251,11 @@ RSpec.describe EdLink::People do
               }
             ]
           }
+        }
       end
       
       it 'calls the API endpoint with the proper params' do
-        expect(EdLink::People).to receive(:request).with(method: method, path: path, filter: filter)
-        EdLink::People.sections(id: id, filter: filter)
+        EdLink::People.sections(id: id, params: params)
       end
     end
   end

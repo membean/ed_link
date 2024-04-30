@@ -43,13 +43,16 @@ filter = {
     }
   ]
 }
+
 schools_where_name_starts_with_z = EdLink::School.all(filter: filter)
 ```
 
 The [EdLink Developer Guides](https://ed.link/docs/guides/v2.0/introduction) have more information that is important to review:
 
+- [Common Error Codes](https://ed.link/docs/api/v2.0/responses/errors)
 - [Filtering](https://ed.link/docs/guides/v2.0/features/filtering-results)
 - [Pagination](https://ed.link/docs/guides/v2.0/features/paginated-requests)
+- [Privacy](https://ed.link/docs/guides/v2.0/security/privacy)
 - [Security](https://ed.link/docs/guides/v2.0/security/data-security)
 
 ## Development

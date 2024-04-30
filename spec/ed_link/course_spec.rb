@@ -3,21 +3,26 @@
 RSpec.describe EdLink::Course do
   let(:method) { :get }
 
+  before do
+    expect(EdLink::Course).to receive(:request).with(method: method, path: path, params: params)
+  end
+
   describe '#all' do
     let(:path) { '/courses' }
 
-    context 'when not filtering' do
-      let(:filter) { {} }
+    context 'with no params' do
+      let(:params) { {} }
 
       it 'calls the correct API endpoint' do
-        expect(EdLink::Course).to receive(:request).with(method: method, path: path, filter: filter)
         EdLink::Course.all
       end
     end
 
-    context 'when filtering' do
-      let(:filter) do
+    context 'with params' do
+      let(:params) do
         {
+          fields: 'name, code',
+          filter: {
             name: [
               {
                 operator: 'starts with',
@@ -25,11 +30,11 @@ RSpec.describe EdLink::Course do
               }
             ]
           }
+        }
       end
       
       it 'calls the API endpoint with the proper params' do
-        expect(EdLink::Course).to receive(:request).with(method: method, path: path, filter: filter)
-        EdLink::Course.all(filter: filter)
+        EdLink::Course.all(params: params)
       end
     end
   end
@@ -38,18 +43,19 @@ RSpec.describe EdLink::Course do
     let(:id) { 123456 }
     let(:path) { "/courses/#{id}/classes" }
 
-    context 'when not filtering' do
-      let(:filter) { {} }
+    context 'with no params' do
+      let(:params) { {} }
 
       it 'calls the correct API endpoint' do
-        expect(EdLink::Course).to receive(:request).with(method: method, path: path, filter:filter)
         EdLink::Course.classes(id: id)
       end
     end
 
-    context 'when filtering' do
-      let(:filter) do
+    context 'with params' do
+      let(:params) do
         {
+          fields: 'name, id',
+          filter: {
             name: [
               {
                 equals: 'starts with',
@@ -57,11 +63,11 @@ RSpec.describe EdLink::Course do
               }
             ]
           }
+        }
       end
       
       it 'calls the API endpoint with the proper params' do
-        expect(EdLink::Course).to receive(:request).with(method: method, path: path, filter: filter)
-        EdLink::Course.classes(id: id, filter: filter)
+        EdLink::Course.classes(id: id, params: params)
       end
     end
   end
@@ -70,9 +76,22 @@ RSpec.describe EdLink::Course do
     let(:id) { 123456 }
     let(:path) { "/courses/#{id}" }
 
-    it 'calls the correct API endpoint' do
-      expect(EdLink::Course).to receive(:request).with(method: method, path: path)
-      EdLink::Course.find(id: id)
+    context 'with no params' do
+      let(:params) { {} }
+    
+      it 'calls the correct API endpoint' do
+        EdLink::Course.find(id: id)
+      end
+    end
+
+    context 'with params' do
+      let(:params) do
+        { fields: 'name, code' }
+      end
+
+      it 'calls the correct API endpoint' do
+        EdLink::Course.find(id: id, params: params)
+      end
     end
   end
 end

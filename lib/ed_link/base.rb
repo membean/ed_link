@@ -18,9 +18,10 @@ module EdLink
         raise "EdLink::#{error_type}".constantize.new(errors, headers)
       end
 
-      def request(method:, path:, filter: {})
+      # TODO: filter and fields need to be accepted as params.
+      def request(method:, path:, params: {})
         headers({ 'Authorization': "Bearer #{EdLink.configuration.access_token}" })
-        params = parse_filter(filter: filter)
+        params = parse_params(params: params)
         response = self.send(method.to_s, path, params)
         json = JSON.parse(response.body).deep_symbolize_keys
         return json if response.code.to_i == 200
@@ -45,10 +46,18 @@ module EdLink
         end
       end
 
-      def parse_filter(filter:)
-        return filter if filter == {}
-
-        { query: { '$filter' => filter.to_json } }
+      def parse_params(params:)
+        return params if params == {}
+        compiled = {}
+        # Add any field params that are present.
+        if params.has_key?(:fields) && params[:fields] != {}
+          compiled.merge!({ '$fields' => params[:fields].gsub(/[[:space:]]/, '') })
+        end
+        # Add any filter params that are present.
+        if params.has_key?(:filter) && params[:filter] != {}
+          compiled.merge!({ '$filter' => params[:filter].to_json })
+        end
+        { query: compiled }
       end
     end
   end
