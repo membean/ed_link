@@ -42,15 +42,15 @@ RSpec.describe EdLink::Base do
   end
 
   describe '#request' do
-    subject { EdLink::Base.request(method: method, path: path, params: params) }
-    
     let(:params) { {} }
     let(:method) { :get }
     let(:path) { '/fake-path' }
 
     context 'when access token is not configured' do
       it 'raises a ConfigurationError' do
-        expect{ subject }.to raise_error(EdLink::ConfigurationError)
+        expect{
+          EdLink::Base.request(method: method, path: path, params: params)
+        }.to raise_error(EdLink::ConfigurationError)
       end
     end
 
@@ -106,7 +106,9 @@ RSpec.describe EdLink::Base do
         end
 
         it 'raises an error' do
-          expect{ subject }.to raise_error(EdLink::BadRequestError)
+          expect{
+            EdLink::Base.request(method: method, path: path, params: params)
+          }.to raise_error(EdLink::BadRequestError)
         end
       end
 
@@ -124,7 +126,7 @@ RSpec.describe EdLink::Base do
         end
 
         it 'returns the API response' do
-          expect(subject).to eq(payload)
+          expect(EdLink::Base.request(method: method, path: path, params: params)).to eq(payload)
         end
       end
 
@@ -146,7 +148,7 @@ RSpec.describe EdLink::Base do
         end
 
         it 'adds the fields to the query params' do
-          expect(subject).to eq(payload)
+          expect(EdLink::Base.request(method: method, path: path, params: params)).to eq(payload)
         end
       end
 
@@ -177,7 +179,7 @@ RSpec.describe EdLink::Base do
         end
 
         it 'adds the filters to the query params' do
-          expect(subject).to eq(payload)
+          expect(EdLink::Base.request(method: method, path: path, params: params)).to eq(payload)
         end
       end
     end

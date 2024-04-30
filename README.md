@@ -60,6 +60,7 @@ The [EdLink Developer Guides](https://ed.link/docs/guides/v2.0/introduction) hav
 - [Pagination](https://ed.link/docs/guides/v2.0/features/paginated-requests)
 - [Privacy](https://ed.link/docs/guides/v2.0/security/privacy)
 - [Security](https://ed.link/docs/guides/v2.0/security/data-security)
+- [Warnings](https://ed.link/docs/api/v2.0/responses/warnings)
 
 ## Development
 
