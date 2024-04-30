@@ -34,7 +34,7 @@ Expects an `ENV` variable called `EDLINK_API_TOKEN` that is a valid API access t
 districts = EdLink::District.all
 school = EdLink::School.find(id: 'e8b207c7-7b80-477c-ae7b-6020de91d46f')
 
-# Filtering (learn more at https://ed.link/docs/guides/v2.0/features/filtering-results)
+# Filtering
 filter = {
   name: [
     {
@@ -48,6 +48,7 @@ schools_where_name_starts_with_z = EdLink::School.all(filter: filter)
 
 The [EdLink Developer Guides](https://ed.link/docs/guides/v2.0/introduction) have more information that is important to review:
 
+- [Filtering](https://ed.link/docs/guides/v2.0/features/filtering-results)
 - [Pagination](https://ed.link/docs/guides/v2.0/features/paginated-requests)
 - [Security](https://ed.link/docs/guides/v2.0/security/data-security)
 
