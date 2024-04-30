@@ -34,23 +34,29 @@ Expects an `ENV` variable called `EDLINK_API_TOKEN` that is a valid API access t
 districts = EdLink::District.all
 school = EdLink::School.find(id: 'e8b207c7-7b80-477c-ae7b-6020de91d46f')
 
-# Filtering
-filter = {
-  name: [
-    {
-      operator: 'starts with',
-      value: 'z'
-    }
-  ]
+# Using params
+params: {
+  fields: 'name, id',
+  filter: {
+    name: [
+      {
+        operator: 'starts with',
+        value: 'z'
+      }
+    ]
+  }
 }
 
-schools_where_name_starts_with_z = EdLink::School.all(filter: filter)
+# Returns only the "name" and "id" fields for schools whose name starts
+# with the letter "z":
+schools_where_name_starts_with_z = EdLink::School.all(params: params)
 ```
 
 The [EdLink Developer Guides](https://ed.link/docs/guides/v2.0/introduction) have more information that is important to review:
 
 - [Common Error Codes](https://ed.link/docs/api/v2.0/responses/errors)
 - [Filtering](https://ed.link/docs/guides/v2.0/features/filtering-results)
+- [Limiting Response Fields](https://ed.link/docs/guides/v2.0/features/limiting-fields)
 - [Pagination](https://ed.link/docs/guides/v2.0/features/paginated-requests)
 - [Privacy](https://ed.link/docs/guides/v2.0/security/privacy)
 - [Security](https://ed.link/docs/guides/v2.0/security/data-security)
