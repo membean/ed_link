@@ -1,0 +1,22 @@
+/.bundle/
+/.DS_Store
+/.yardoc
+/_yardoc/
+/build_info/
+/cache/
+/coverage/
+/doc/
+/gems/
+/pkg/
+/plugins/
+/spec/reports/
+/specifications/
+/tmp/
+
+# rspec failure tracking
+.rspec_status
+
+# Don't upload gem builds
+*.gem
+
+.ruby-version
