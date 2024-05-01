@@ -83,10 +83,47 @@ EdLink::School.all(params: params)
 #     :$request=>"50bcd21d-4c01-4cb3-af22-b5f65483ba6a"
 #   }
 
+# Returns only the "name" and "id" fields and expands the "district_id" field for
+# a single school. (Notice that we are including the expanded field name "district")
+# in the "fields" param.
+params: {
+  expand: 'district',
+  fields: 'name, id, district'
+}
+EdLink::School.find(id: 'e8b207c7-7b80-477c-ae7b-6020de91d46f')
+#=> {
+#     :$data=> [
+#       {
+#         :name=>"Edlink (District Office)",
+#         :id=>"e8b207c7-7b80-477c-ae7b-6020de91d46f"
+#         :district=>{
+#           :created_date=>"2024-04-19T01:14:38.391Z",
+#           :updated_date=>"2024-04-19T01:14:38.391Z",
+#           :name=>"Edlink",
+#           ...
+#           :id=>"08a5422e-13f4-4c0a-ba0f-e46f547ffc53"
+#         }
+#       }
+#     ],
+#     :$request=>"50bcd21d-4c01-4cb3-af22-b5f65483ba6a"
+#   }
+
 
 # Errors
 school = EdLink::School.find(id: 'e8b207c7')
 #=> EdLink::BadRequestError: A valid v4 or v5 UUID or Alias is expected for parameter 'school_id'. (1/1 errors)
+
+begin
+  school = EdLink::School.find(id: 'e8b207c7')
+rescue EdLink::BadRequestError => error
+  # Show the array of errors that came back from the API
+  #(only the first error is shown in the exception messege)
+  puts error.errors
+  # Show the response headers from the API
+  # (Edlink will probably add rate limiting/throttling in the future)
+  puts error.headers 
+end
+
 ```
 
 The [EdLink Developer Guides](https://ed.link/docs/guides/v2.0/introduction) have more information that is important to review:
