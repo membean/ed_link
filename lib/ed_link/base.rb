@@ -49,23 +49,27 @@ module EdLink
       def parse_params(params:)
         return params if params == {}
 
-        # Grab value or assign to nil.
+        # Gets the value or assigns nil
         expand = params[:expand]
         fields = params[:fields]
         filter = params[:filter]
+        first = params[:first]
 
         # Ensure params are in the correct format.
-        raise_argument_error(label: 'expand',param: expand, type: String) if expand && expand.class != String
+        raise_argument_error(label: 'expand', param: expand, type: String) if expand && expand.class != String
         raise_argument_error(label: 'fields', param: fields, type: String) if fields && fields.class != String
         raise_argument_error(label: 'filter', param: filter, type: Hash)if filter && filter.class != Hash
+        raise_argument_error(label: 'first', param: first, type: Integer)if first && first.class != Integer
           
         compiled = {}
-        # Add any expand params that are present.
+        # Add the expand param if present.
         compiled.merge!({ '$expand' => params[:expand].gsub(/[[:space:]]/, '') }) if expand.present?
-        # Add any field params that are present.
+        # Add the field params if present.
         compiled.merge!({ '$fields' => params[:fields].gsub(/[[:space:]]/, '') }) if fields.present?
-        # Add any filter params that are present.
+        # Add the filter params if present.
         compiled.merge!({ '$filter' => params[:filter].to_json }) if filter.present?
+        # Add the first params if present.
+        compiled.merge!({ '$first' => params[:first].to_i }) if first.present?
         # Return the query hash for HTTParty.
         { query: compiled }
       end

@@ -233,6 +233,36 @@ RSpec.describe EdLink::Base do
         end
       end
 
+      context 'and first param is an integer' do
+        let(:params) do
+          { first: 100 }
+        end
+        let(:url) { "https://ed.link/api/v2/graph#{path}?$first=100" }
+
+        before do
+          stub_request(:get, url).with(headers: request_headers).to_return(
+            status: 200, body: payload.to_json, headers: response_headers
+          )
+        end
+
+        it 'adds first to the query params' do
+          expect(EdLink::Base.request(method: method, path: path, params: params)).to eq(payload)
+        end
+      end
+
+      context 'and first param is not an integer' do
+        let(:bad_type) { 'bad' }
+        let(:params) do
+          { first: bad_type }
+        end
+
+        it 'raises and ArgumentError' do
+          expect{
+            EdLink::Base.request(method: method, path: path, params: params)
+          }.to raise_error(ArgumentError, "Expected \"first\" param to be a Integer, got #{bad_type.class}.")
+        end
+      end
+
       context 'and all supported query params are applied' do
         let(:params) do
           {

@@ -30,6 +30,52 @@ end
 
 Expects an `ENV` variable called `EDLINK_API_TOKEN` that is a valid API access token for the EdLink Graph API. [Take a look at each resource](https://github.com/membean/ed_link/tree/main/lib/ed_link) to see the methods that correspond to the endpoints in the [EdLink Graph API documentation](https://ed.link/docs/api/v2.0/introduction).
 
+The [EdLink Developer Guides](https://ed.link/docs/guides/v2.0/introduction) have more information that is important to review:
+
+- [Common Error Codes](https://ed.link/docs/api/v2.0/responses/errors)
+- [Expanding Results](https://ed.link/docs/guides/v2.0/features/expanding-results)
+- [Filtering](https://ed.link/docs/guides/v2.0/features/filtering-results)
+- [Limiting Response Fields](https://ed.link/docs/guides/v2.0/features/limiting-fields)
+- [Pagination](https://ed.link/docs/guides/v2.0/features/paginated-requests)
+- [Privacy](https://ed.link/docs/guides/v2.0/security/privacy)
+- [Security](https://ed.link/docs/guides/v2.0/security/data-security)
+- [Warnings](https://ed.link/docs/api/v2.0/responses/warnings)
+
+
+Query parameters for API requests are supported, and should be included in a single hash. For example, if you want to apply query parameters to the `EdLink::School.all` method you would call it like `EdLink::School.all(params: params)`.
+
+Note, most [pagination parameters](https://ed.link/docs/guides/v2.0/features/paginated-requests) are not currently supported as we encourage you to use the preferred way to paginate results by using the `$next` URL. However, the gem does support the `$first` pagination parameter as a means of adjusting the page size.
+
+Currently supported query parameters:
+
+```ruby 
+{
+  # Expand must be a String with a specific value based on the
+  # resource you are trying to expand.
+  # https://ed.link/docs/guides/v2.0/features/expanding-results
+  expand: 'district',
+  # Fields must be a String of comma-separated field names that you
+  # want to include in the response.
+  # https://ed.link/docs/guides/v2.0/features/limiting-fields
+  fields: 'name, id',
+  # Filter must be a Hash with a specific structure based on the
+  # resource you are accessing.
+  # https://ed.link/docs/guides/v2.0/features/filtering-results
+  filter: {
+    name: [
+      {
+        operator: 'starts with',
+        value: 'r'
+      }
+    ]
+  },
+  # First must be an Integer and will be disregarded by the API if
+  # it is larger than 10,000. Default is 100.
+  # https://ed.link/docs/guides/v2.0/features/paginated-requests
+  first: 100
+}
+```
+
 ```ruby
 EdLink::District.all
 #=> {
@@ -125,17 +171,6 @@ rescue EdLink::BadRequestError => error
 end
 
 ```
-
-The [EdLink Developer Guides](https://ed.link/docs/guides/v2.0/introduction) have more information that is important to review:
-
-- [Common Error Codes](https://ed.link/docs/api/v2.0/responses/errors)
-- [Expanding Results](https://ed.link/docs/guides/v2.0/features/expanding-results)
-- [Filtering](https://ed.link/docs/guides/v2.0/features/filtering-results)
-- [Limiting Response Fields](https://ed.link/docs/guides/v2.0/features/limiting-fields)
-- [Pagination](https://ed.link/docs/guides/v2.0/features/paginated-requests)
-- [Privacy](https://ed.link/docs/guides/v2.0/security/privacy)
-- [Security](https://ed.link/docs/guides/v2.0/security/data-security)
-- [Warnings](https://ed.link/docs/api/v2.0/responses/warnings)
 
 ## Development
 
