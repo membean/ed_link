@@ -70,11 +70,13 @@ Currently supported query parameters:
     ]
   },
   # First must be an Integer and will be disregarded by the API if
-  # it is larger than 10,000. Default is 100.
+  # it is larger than 10,000. (Default is 100.)
   # https://ed.link/docs/guides/v2.0/features/paginated-requests
   first: 100
 }
 ```
+
+## Examples
 
 ```ruby
 EdLink::District.all
@@ -90,7 +92,9 @@ EdLink::District.all
 #     ],
 #     :$request=>"d1c5f7eb-8d6c-4456-92ac-8c528d374e78"
 #   }
+```
 
+```ruby 
 EdLink::School.find(id: 'e8b207c7-7b80-477c-ae7b-6020de91d46f')
 #=> {
 #     :$data=> [
@@ -104,7 +108,9 @@ EdLink::School.find(id: 'e8b207c7-7b80-477c-ae7b-6020de91d46f')
 #     ],
 #     :$request=>"e6e5a17f-cc84-46ee-91bb-9bec990444f9"
 #   }
+```
 
+```ruby 
 # Returns only the "name" and "id" fields for schools whose name starts
 # with the letter "z":
 params: {
@@ -128,7 +134,9 @@ EdLink::School.all(params: params)
 #     ],
 #     :$request=>"50bcd21d-4c01-4cb3-af22-b5f65483ba6a"
 #   }
+```
 
+```ruby 
 # Returns only the "name" and "id" fields and expands the "district_id" field for
 # a single school. (Notice that we are including the expanded field name "district")
 # in the "fields" param.
@@ -153,8 +161,29 @@ EdLink::School.find(id: 'e8b207c7-7b80-477c-ae7b-6020de91d46f')
 #     ],
 #     :$request=>"50bcd21d-4c01-4cb3-af22-b5f65483ba6a"
 #   }
+```
 
+```ruby 
+# Returns only 1 result per "page" and illustrates the $next key for
+# pagination.
+params: {
+  first: 1,
+  fields: 'name, id'
+}
+EdLink::School.find(id: 'e8b207c7-7b80-477c-ae7b-6020de91d46f')
+#=> {
+#     :$data=> [
+#       {
+#         "name": "Edlink (District Office)",
+#         "id": "e8b207c7-7b80-477c-ae7b-6020de91d46f"
+#       }
+#     ],
+#     "$next": "https://ed.link/api/v2/graph/schools?$cursor=622bea99-3bdd-4bdc-8e55-6f87bed32dfe",
+#     "$request": "904a6cc7-65ce-40b1-b400-892bf6dcd956"
+#   }
+```
 
+```ruby 
 # Errors
 school = EdLink::School.find(id: 'e8b207c7')
 #=> EdLink::BadRequestError: A valid v4 or v5 UUID or Alias is expected for parameter 'school_id'. (1/1 errors)
