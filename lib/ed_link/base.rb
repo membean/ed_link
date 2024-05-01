@@ -49,8 +49,12 @@ module EdLink
       def parse_params(params:)
         return params if params == {}
         compiled = {}
+        # Add any expand params that are present.
+        if params.has_key?(:expand) && params[:expand] != ''
+          compiled.merge!({ '$expand' => params[:expand].gsub(/[[:space:]]/, '') })
+        end
         # Add any field params that are present.
-        if params.has_key?(:fields) && params[:fields] != {}
+        if params.has_key?(:fields) && params[:fields] != ''
           compiled.merge!({ '$fields' => params[:fields].gsub(/[[:space:]]/, '') })
         end
         # Add any filter params that are present.

@@ -130,6 +130,28 @@ RSpec.describe EdLink::Base do
         end
       end
 
+      context 'and expand is applied' do
+        let(:params) do
+          { expand: 'district' }
+        end
+        let(:payload) do
+          { 
+            '$data': 'Fake API response'
+          }
+        end
+        let(:url) { "https://ed.link/api/v2/graph#{path}?$expand=district" }
+
+        before do
+          stub_request(:get, url).with(headers: request_headers).to_return(
+            status: 200, body: payload.to_json, headers: response_headers
+          )
+        end
+
+        it 'adds expand to the query params' do
+          expect(EdLink::Base.request(method: method, path: path, params: params)).to eq(payload)
+        end
+      end
+
       context 'and fields are selected' do
         let(:params) do
           { fields: 'name, district_id' }
@@ -147,7 +169,7 @@ RSpec.describe EdLink::Base do
           )
         end
 
-        it 'adds the fields to the query params' do
+        it 'adds fields to the query params' do
           expect(EdLink::Base.request(method: method, path: path, params: params)).to eq(payload)
         end
       end
@@ -178,7 +200,7 @@ RSpec.describe EdLink::Base do
           )
         end
 
-        it 'adds the filters to the query params' do
+        it 'adds filter to the query params' do
           expect(EdLink::Base.request(method: method, path: path, params: params)).to eq(payload)
         end
       end

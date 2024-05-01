@@ -92,6 +92,7 @@ school = EdLink::School.find(id: 'e8b207c7')
 The [EdLink Developer Guides](https://ed.link/docs/guides/v2.0/introduction) have more information that is important to review:
 
 - [Common Error Codes](https://ed.link/docs/api/v2.0/responses/errors)
+- [Expanding Results](https://ed.link/docs/guides/v2.0/features/expanding-results)
 - [Filtering](https://ed.link/docs/guides/v2.0/features/filtering-results)
 - [Limiting Response Fields](https://ed.link/docs/guides/v2.0/features/limiting-fields)
 - [Pagination](https://ed.link/docs/guides/v2.0/features/paginated-requests)
