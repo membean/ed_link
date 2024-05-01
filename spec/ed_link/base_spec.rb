@@ -71,6 +71,11 @@ RSpec.describe EdLink::Base do
       let(:response_headers) do
         { 'content-type': ['application/json'] }
       end
+      let(:payload) do
+        { 
+          '$data': 'Fake API response'
+        }
+      end
 
       # Configure the gem
       before do
@@ -87,12 +92,13 @@ RSpec.describe EdLink::Base do
       end
 
       context 'and the response has errors' do
+        let(:message) { 'This is a human-readable description of the error.' }
         let(:payload) do
           {
             '$errors': [
               {
                 code: 'ERROR_CODE_EXAMPLE',
-                message: 'This is a human-readable description of the error.'
+                message: message
               }
             ]
           }
@@ -108,17 +114,11 @@ RSpec.describe EdLink::Base do
         it 'raises an error' do
           expect{
             EdLink::Base.request(method: method, path: path, params: params)
-          }.to raise_error(EdLink::BadRequestError)
+          }.to raise_error(EdLink::BadRequestError, "#{message} (1/1 errors)")
         end
       end
 
       context 'and the response is succcessful' do
-        let(:payload) do
-          { 
-            '$data': 'Fake API response'
-          }
-        end
-
         before do
           stub_request(:get, url).with(headers: request_headers).to_return(
             status: 200, body: payload.to_json, headers: response_headers
@@ -130,14 +130,9 @@ RSpec.describe EdLink::Base do
         end
       end
 
-      context 'and expand is applied' do
+      context 'and expand param is a string' do
         let(:params) do
           { expand: 'district' }
-        end
-        let(:payload) do
-          { 
-            '$data': 'Fake API response'
-          }
         end
         let(:url) { "https://ed.link/api/v2/graph#{path}?$expand=district" }
 
@@ -152,14 +147,24 @@ RSpec.describe EdLink::Base do
         end
       end
 
-      context 'and fields are selected' do
+      context 'and expand param is not a string' do
+        let(:bad_type) do
+          { bad: 'type' }
+        end
+        let(:params) do
+          { expand: bad_type }
+        end
+
+        it 'raises and ArgumentError' do
+          expect{
+            EdLink::Base.request(method: method, path: path, params: params)
+          }.to raise_error(ArgumentError, "Expected \"expand\" param to be a String, got #{bad_type.class}.")
+        end
+      end
+
+      context 'and fields param is a string' do
         let(:params) do
           { fields: 'name, district_id' }
-        end
-        let(:payload) do
-          { 
-            '$data': 'Fake API response'
-          }
         end
         let(:url) { "https://ed.link/api/v2/graph#{path}?$fields=name,district_id" }
 
@@ -174,7 +179,22 @@ RSpec.describe EdLink::Base do
         end
       end
 
-      context 'and filters are applied' do
+      context 'and fields param is not a string' do
+        let(:bad_type) do
+          { bad: 'type' }
+        end
+        let(:params) do
+          { fields: bad_type }
+        end
+
+        it 'raises and ArgumentError' do
+          expect{
+            EdLink::Base.request(method: method, path: path, params: params)
+          }.to raise_error(ArgumentError, "Expected \"fields\" param to be a String, got #{bad_type.class}.")
+        end
+      end
+
+      context 'and filters param is a hash' do
         let(:params) do
           {
             filter: {
@@ -187,12 +207,50 @@ RSpec.describe EdLink::Base do
             }
           }
         end
-        let(:payload) do
-          { 
-            '$data': 'Fake API response'
+        let(:url) { "https://ed.link/api/v2/graph#{path}?$filter=#{params[:filter].to_json}" }
+
+        before do
+          stub_request(:get, url).with(headers: request_headers).to_return(
+            status: 200, body: payload.to_json, headers: response_headers
+          )
+        end
+
+        it 'adds filter to the query params' do
+          expect(EdLink::Base.request(method: method, path: path, params: params)).to eq(payload)
+        end
+      end
+
+      context 'and filters param is not a hash' do
+        let(:bad_type) { 'bad' }
+        let(:params) do
+          { filter: bad_type }
+        end
+
+        it 'raises and ArgumentError' do
+          expect{
+            EdLink::Base.request(method: method, path: path, params: params)
+          }.to raise_error(ArgumentError, "Expected \"filter\" param to be a Hash, got #{bad_type.class}.")
+        end
+      end
+
+      context 'and all supported query params are applied' do
+        let(:params) do
+          {
+            expand: 'district',
+            fields: 'name, id, district',
+            filter: {
+              name: [
+                {
+                  operator: 'starts with',
+                  value: 'z'
+                }
+              ]
+            }
           }
         end
-        let(:url) { "https://ed.link/api/v2/graph#{path}?$filter=#{params[:filter].to_json}" }
+        let(:url) do
+          "https://ed.link/api/v2/graph#{path}?$expand=district&$fields=name,id,district&$filter=#{params[:filter].to_json}"
+        end
 
         before do
           stub_request(:get, url).with(headers: request_headers).to_return(
