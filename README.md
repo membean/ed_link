@@ -170,7 +170,7 @@ params: {
   first: 1,
   fields: 'name, id'
 }
-EdLink::School.all
+EdLink::School.all(params: params)
 #=> {
 #     :$data=> [
 #       {
