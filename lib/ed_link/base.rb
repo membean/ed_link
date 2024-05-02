@@ -18,7 +18,21 @@ module EdLink
         raise "EdLink::#{error_type}".constantize.new(errors, headers)
       end
 
-      # TODO: filter and fields need to be accepted as params.
+      def next(method: :get, url:)
+        raise_argument_error(label: 'method', param: method, type: Symbol) if method.class != Symbol
+        raise_argument_error(label: 'url', param: url, type: String) if url && url.class != String
+        
+        # Validate the url and form the request
+        uri = URI(url.split(EdLink::Base.base_uri)[1])
+        if uri.query.nil? || !uri.query.include?('$cursor=')
+          raise ArgumentError.new('Expected "url" to have a "$cursor" query param.')
+        end
+        path = uri.path
+        cursor = uri.query.split('$cursor=')[1]
+        params = { query: { '$cursor' => cursor } }
+        request(method: method, path: path, params: params)
+      end
+
       def request(method:, path:, params: {})
         headers({ 'Authorization': "Bearer #{EdLink.configuration.access_token}" })
         params = parse_params(params: params)

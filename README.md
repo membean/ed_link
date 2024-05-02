@@ -46,19 +46,19 @@ Query parameters for API requests are supported, and should be included in a sin
 
 Note, most [pagination parameters](https://ed.link/docs/guides/v2.0/features/paginated-requests) are not currently supported as we encourage you to use the preferred way to paginate results by using the `$next` URL. However, the gem does support the `$first` pagination parameter as a means of adjusting the page size.
 
-Currently supported query parameters:
+**Currently supported query parameters:**
 
 ```ruby 
 {
-  # Expand must be a String with a specific value based on the
+  # "expand" must be a String with a specific value based on the
   # resource you are trying to expand.
   # https://ed.link/docs/guides/v2.0/features/expanding-results
   expand: 'district',
-  # Fields must be a String of comma-separated field names that you
+  # "fields" must be a String of comma-separated field names that you
   # want to include in the response.
   # https://ed.link/docs/guides/v2.0/features/limiting-fields
   fields: 'name, id',
-  # Filter must be a Hash with a specific structure based on the
+  # "filter" must be a Hash with a specific structure based on the
   # resource you are accessing.
   # https://ed.link/docs/guides/v2.0/features/filtering-results
   filter: {
@@ -69,7 +69,7 @@ Currently supported query parameters:
       }
     ]
   },
-  # First must be an Integer and will be disregarded by the API if
+  # "first" must be an Integer and will be disregarded by the API if
   # it is larger than 10,000. (Default is 100.)
   # https://ed.link/docs/guides/v2.0/features/paginated-requests
   first: 100
@@ -148,18 +148,18 @@ EdLink::School.find(id: 'e8b207c7-7b80-477c-ae7b-6020de91d46f')
 #=> {
 #     :$data=> [
 #       {
-#         :name=>"Edlink (District Office)",
-#         :id=>"e8b207c7-7b80-477c-ae7b-6020de91d46f"
-#         :district=>{
-#           :created_date=>"2024-04-19T01:14:38.391Z",
-#           :updated_date=>"2024-04-19T01:14:38.391Z",
-#           :name=>"Edlink",
+#         :name => "Edlink (District Office)",
+#         :id => "e8b207c7-7b80-477c-ae7b-6020de91d46f"
+#         :district => {
+#           :created_date => "2024-04-19T01:14:38.391Z",
+#           :updated_date =>"2024-04-19T01:14:38.391Z",
+#           :name => "Edlink",
 #           ...
-#           :id=>"08a5422e-13f4-4c0a-ba0f-e46f547ffc53"
+#           :id => "08a5422e-13f4-4c0a-ba0f-e46f547ffc53"
 #         }
 #       }
 #     ],
-#     :$request=>"50bcd21d-4c01-4cb3-af22-b5f65483ba6a"
+#     :$request= > "50bcd21d-4c01-4cb3-af22-b5f65483ba6a"
 #   }
 ```
 
@@ -170,17 +170,30 @@ params: {
   first: 1,
   fields: 'name, id'
 }
-EdLink::School.find(id: 'e8b207c7-7b80-477c-ae7b-6020de91d46f')
+EdLink::School.all
 #=> {
 #     :$data=> [
 #       {
-#         "name": "Edlink (District Office)",
-#         "id": "e8b207c7-7b80-477c-ae7b-6020de91d46f"
+#         :name =>  "Edlink (District Office)",
+#         :id => "e8b207c7-7b80-477c-ae7b-6020de91d46f"
 #       }
 #     ],
-#     "$next": "https://ed.link/api/v2/graph/schools?$cursor=622bea99-3bdd-4bdc-8e55-6f87bed32dfe",
-#     "$request": "904a6cc7-65ce-40b1-b400-892bf6dcd956"
+#     :$next => "https://ed.link/api/v2/graph/schools?$cursor=46aef3e1-e9a7-4167-9da7-85999f34310e",
+#     :$request => "904a6cc7-65ce-40b1-b400-892bf6dcd956"
 #   }
+
+# Using the $next URL to retrieve the next page of results:
+EdLink::School.next(url: 'https://ed.link/api/v2/graph/schools?$cursor=46aef3e1-e9a7-4167-9da7-85999f34310e')
+#=> {
+#     :$data: [
+#       {
+#         :name => "Eddie Lynx",
+#         :id => "10ae266b-a974-4875-8f4e-5aa52a7af9f3"
+#       }
+#    ],
+#    :$next => "https://ed.link/api/v2/graph/schools?$cursor=48f1e496-e5b2-436d-a57d-df2451fa5f34",
+#    :$request => "18be1073-549e-462b-ad8d-1049216931bb"
+#  }
 ```
 
 ```ruby 

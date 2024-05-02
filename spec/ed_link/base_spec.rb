@@ -41,6 +41,65 @@ RSpec.describe EdLink::Base do
     end
   end
 
+  describe '#next' do
+    let(:cursor) { '622bea99-3bdd-4bdc-8e55-6f87bed32dfe' }
+    let(:method) { :get }
+    let(:params) do
+      { query: { '$cursor' => cursor } }
+    end
+    let(:path) { "/schools" }
+    let(:url) do
+      "https://ed.link/api/v2/graph#{path}"
+    end
+
+    context 'when the params are valid' do
+      it 'requests the next page of data' do
+        expect(EdLink::Base).to receive(:request).with(method: method, path: path, params: params)
+        EdLink::Base.next(method: method, url: "#{url}?$cursor=#{cursor}")
+      end
+    end
+
+    context 'when the "method" param is not a Symbol' do
+      let(:method) { 'bad-type' }
+
+      it 'raises an ArgumentError' do
+        expect{
+            EdLink::Base.next(method: method, url: url)
+          }.to raise_error(ArgumentError, "Expected \"method\" param to be a Symbol, got #{method.class}.")
+      end
+    end
+
+    context 'when the "url" param is not a String' do
+      let(:url) { :badtype }
+
+      it 'raises an ArgumentError' do
+        expect{
+            EdLink::Base.next(method: method, url: url)
+          }.to raise_error(ArgumentError, "Expected \"url\" param to be a String, got #{url.class}.")
+      end
+    end
+
+    context 'when the "url" param is missing query params' do
+      let(:url) { 'https://ed.link/api/v2/graph/schools' }
+
+      it 'raises an ArgumentError' do
+        expect{
+            EdLink::Base.next(method: method, url: url)
+          }.to raise_error(ArgumentError, 'Expected "url" to have a "$cursor" query param.')
+      end
+    end
+
+    context 'when the "url" param is missing a $cursor query param' do
+      let(:url) { 'https://ed.link/api/v2/graph/schools?search=fake' }
+
+      it 'raises an ArgumentError' do
+        expect{
+            EdLink::Base.next(method: method, url: url)
+          }.to raise_error(ArgumentError, 'Expected "url" to have a "$cursor" query param.')
+      end
+    end
+  end
+
   describe '#request' do
     let(:params) { {} }
     let(:method) { :get }
