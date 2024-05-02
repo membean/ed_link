@@ -181,19 +181,48 @@ EdLink::School.all(params: params)
 #     :$next => "https://ed.link/api/v2/graph/schools?$cursor=46aef3e1-e9a7-4167-9da7-85999f34310e",
 #     :$request => "904a6cc7-65ce-40b1-b400-892bf6dcd956"
 #   }
+```
 
+```ruby 
 # Using the $next URL to retrieve the next page of results:
-EdLink::School.next(url: 'https://ed.link/api/v2/graph/schools?$cursor=46aef3e1-e9a7-4167-9da7-85999f34310e')
+EdLink::School.next(
+  url: 'https://ed.link/api/v2/graph/schools?$cursor=46aef3e1-e9a7-4167-9da7-85999f34310e'
+)
 #=> {
 #     :$data: [
 #       {
+#         :id => "10ae266b-a974-4875-8f4e-5aa52a7af9f3",
 #         :name => "Eddie Lynx",
-#         :id => "10ae266b-a974-4875-8f4e-5aa52a7af9f3"
+#         ...
 #       }
 #    ],
 #    :$next => "https://ed.link/api/v2/graph/schools?$cursor=48f1e496-e5b2-436d-a57d-df2451fa5f34",
 #    :$request => "18be1073-549e-462b-ad8d-1049216931bb"
 #  }
+
+# You can also pass the "first" parameter to the #next method to limit the page size of the results
+# (Even though Edlink says that these params are ignored.)
+EdLink::School.next(
+  url: 'https://ed.link/api/v2/graph/schools?$cursor=46aef3e1-e9a7-4167-9da7-85999f34310e',
+  params: { first: 1 }
+)
+#=> {
+#     "$data": [
+#       {
+#         "id": "10ae266b-a974-4875-8f4e-5aa52a7af9f3",
+#         "name": "Eddie Lynx",
+#         ...
+#       }
+#     ],
+#     "$next": "https://ed.link/api/v2/graph/schools?$cursor=36a20105-d87a-4a75-8dbb-43dd227b12b3",
+#     "$request": "7d3901b7-9d36-4037-bcb5-6766eb6e35d0",
+#     "$warnings": [
+#       {
+#         "code": "PAGING_IGNORED",
+#         "message": "Use of the $cursor parameter overrides any provided $first, $last, $before, or $after parameters."
+#       }
+#     ]
+#   }
 ```
 
 ```ruby 
