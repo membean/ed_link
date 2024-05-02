@@ -18,7 +18,7 @@ module EdLink
         raise "EdLink::#{error_type}".constantize.new(errors, headers)
       end
 
-      def next(method: :get, url:)
+      def next(url:, method: :get, params: {})
         raise_argument_error(label: 'method', param: method, type: Symbol) if method.class != Symbol
         raise_argument_error(label: 'url', param: url, type: String) if url && url.class != String
         
@@ -29,7 +29,8 @@ module EdLink
         end
         path = uri.path
         cursor = uri.query.split('$cursor=')[1]
-        params = { query: { '$cursor' => cursor } }
+        params.merge!({ cursor: cursor })
+        params = parse_params(params: params)
         request(method: method, path: path, params: params)
       end
 
@@ -64,18 +65,22 @@ module EdLink
         return params if params == {}
 
         # Gets the value or assigns nil
+        cursor = params[:cursor]
         expand = params[:expand]
         fields = params[:fields]
         filter = params[:filter]
         first = params[:first]
 
         # Ensure params are in the correct format.
+        raise_argument_error(label: 'cursor', param: expand, type: String) if cursor && cursor.class != String
         raise_argument_error(label: 'expand', param: expand, type: String) if expand && expand.class != String
         raise_argument_error(label: 'fields', param: fields, type: String) if fields && fields.class != String
         raise_argument_error(label: 'filter', param: filter, type: Hash)if filter && filter.class != Hash
         raise_argument_error(label: 'first', param: first, type: Integer)if first && first.class != Integer
           
         compiled = {}
+        # Add the cursor param if present.
+        compiled.merge!({ '$cursor' => params[:cursor] }) if cursor.present?
         # Add the expand param if present.
         compiled.merge!({ '$expand' => params[:expand].gsub(/[[:space:]]/, '') }) if expand.present?
         # Add the field params if present.

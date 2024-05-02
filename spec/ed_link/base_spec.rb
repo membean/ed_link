@@ -52,10 +52,29 @@ RSpec.describe EdLink::Base do
       "https://ed.link/api/v2/graph#{path}"
     end
 
-    context 'when the params are valid' do
+    context 'when the url is valid' do
       it 'requests the next page of data' do
         expect(EdLink::Base).to receive(:request).with(method: method, path: path, params: params)
         EdLink::Base.next(method: method, url: "#{url}?$cursor=#{cursor}")
+      end
+    end
+
+    context 'when the "first" params is included' do
+      let(:params) do
+        { 
+          query: {
+            '$cursor' => cursor,
+            '$first' => 1
+          }
+        }
+      end
+      let(:input_params) do
+        { first: 1 }
+      end
+
+      it 'requests the next page of data' do
+        expect(EdLink::Base).to receive(:request).with(method: method, path: path, params: params)
+        EdLink::Base.next(method: method, url: "#{url}?$cursor=#{cursor}", params: input_params)
       end
     end
 
@@ -89,7 +108,7 @@ RSpec.describe EdLink::Base do
       end
     end
 
-    context 'when the "url" param is missing a $cursor query param' do
+    context 'when the "url" param is missing the $cursor query param' do
       let(:url) { 'https://ed.link/api/v2/graph/schools?search=fake' }
 
       it 'raises an ArgumentError' do
