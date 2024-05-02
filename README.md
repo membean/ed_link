@@ -205,7 +205,7 @@ begin
   school = EdLink::School.find(id: 'e8b207c7')
 rescue EdLink::BadRequestError => error
   # Show the array of errors that came back from the API
-  #(only the first error is shown in the exception messege)
+  # (only the first error is shown in the exception messege)
   puts error.errors
   # Show the response headers from the API
   # (Edlink will probably add rate limiting/throttling in the future)
