@@ -113,7 +113,7 @@ EdLink::School.find(id: 'e8b207c7-7b80-477c-ae7b-6020de91d46f')
 ```ruby 
 # Returns only the "name" and "id" fields for schools whose name starts
 # with the letter "z":
-params: {
+params = {
   fields: 'name, id',
   filter: {
     name: [
@@ -140,11 +140,11 @@ EdLink::School.all(params: params)
 # Returns only the "name" and "id" fields and expands the "district_id" field for
 # a single school. (Notice that we are including the expanded field name "district")
 # in the "fields" param.
-params: {
+params = {
   expand: 'district',
   fields: 'name, id, district'
 }
-EdLink::School.find(id: 'e8b207c7-7b80-477c-ae7b-6020de91d46f')
+EdLink::School.find(id: 'e8b207c7-7b80-477c-ae7b-6020de91d46f', params: params)
 #=> {
 #     :$data=> [
 #       {
@@ -166,7 +166,7 @@ EdLink::School.find(id: 'e8b207c7-7b80-477c-ae7b-6020de91d46f')
 ```ruby 
 # Returns only 1 result per "page" and illustrates the $next key for
 # pagination.
-params: {
+params=  {
   first: 1,
   fields: 'name, id'
 }
