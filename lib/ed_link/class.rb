@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module EdLink
-  class Class < Base
+  class Class < GraphBase
     
     class << self
       # https://ed.link/docs/api/v2.0/classes/graph-list-classes

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module EdLink
-  class School < Base
+  class School < GraphBase
     
     class << self
       # https://ed.link/docs/api/v2.0/schools/graph-list-administrators

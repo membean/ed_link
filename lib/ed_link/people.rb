@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module EdLink
-  class People < Base
+  class People < GraphBase
     
     class << self
       # https://ed.link/docs/api/v2.0/people/graph-list-agents

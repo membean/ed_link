@@ -1,6 +1,6 @@
 # EdLink
 
-A very thin wrapper around the [EdLink Graph API (v2)](https://ed.link/docs/api/v2.0/introduction).
+A very thin wrapper around the [EdLink REST API (v2)](https://ed.link/docs/api/v2.0/introduction).
 
 ## Installation
 
@@ -17,18 +17,23 @@ Or install it yourself as:
     $ gem install ed_link
 
 ## Configuration
-API keys must be configured in the gem setup. You can do this anywhere in your application before you make API calls using the gem.
+App Secret and Integration Access Token can be configured in the gem setup. You can do this anywhere in your application before you make API calls using the gem.
 
 ```ruby
 # config/initializers/ed_link.rb
 EdLink.configure do |config|
-  config.access_token = ENV['EDLINK_API_TOKEN']
+  config.app_secret = ENV['EDLINK_APP_SECRET']
+  config.access_token = ENV['EDLINK_ACCESS_TOKEN']
 end
 ```
 
+App Secret is required only for any of the Meta API like [Integrations](https://ed.link/docs/api/v2.0/integrations/overview). Refer [Meta API Authorization](https://ed.link/docs/api/v2.0/authorization/meta) for more details.
+
+**NOTE:** The [Graph API Authorization](https://ed.link/docs/api/v2.0/authorization/graph) requires an Access Token which is unique per district / integration. When there are multiple integrations, set the appropriate access token in the config or pass it as a param(*recommended*) in the request.
+
 ## Usage
 
-Expects an `ENV` variable called `EDLINK_API_TOKEN` that is a valid API access token for the EdLink Graph API. [Take a look at each resource](https://github.com/membean/ed_link/tree/main/lib/ed_link) to see the methods that correspond to the endpoints in the [EdLink Graph API documentation](https://ed.link/docs/api/v2.0/introduction).
+Ensure to set the `ENV` variables - `EDLINK_APP_SECRET` and `EDLINK_API_TOKEN`. [Take a look at each resource](https://github.com/membean/ed_link/tree/main/lib/ed_link) to see the methods that correspond to the endpoints in the [EdLink Graph API documentation](https://ed.link/docs/api/v2.0/introduction).
 
 The [EdLink Developer Guides](https://ed.link/docs/guides/v2.0/introduction) have more information that is important to review:
 

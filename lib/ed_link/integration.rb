@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
 module EdLink
-  class Session < GraphBase
-    
+  class Integration < MetaBase
+
     class << self
-      # https://ed.link/docs/api/v2.0/sessions/graph-list-sessions
+      # https://ed.link/docs/api/v2.0/integrations/meta-list-integrations
       def all(params: {})
-        path = '/sessions'
+        path = '/integrations'
         request(method: :get, path: path, params: params)
       end
 
-      # https://ed.link/docs/api/v2.0/sessions/graph-get-session
+      # https://ed.link/docs/api/v2.0/integrations/meta-get-integration
       def find(id:, params: {})
-        path = "/sessions/#{id}"
+        path = "/integrations/#{id}"
         request(method: :get, path: path, params: params)
       end
     end
