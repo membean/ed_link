@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module EdLink
-  class District < Base
+  class District < GraphBase
     
     class << self
       # https://ed.link/docs/api/v2.0/districts/graph-list-district-administrators

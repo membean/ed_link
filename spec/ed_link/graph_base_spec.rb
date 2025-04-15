@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe EdLink::Base do
+RSpec.describe EdLink::GraphBase do
   describe '#handle_errors' do
     [
       [400, 'BadRequestError'],
@@ -30,7 +30,7 @@ RSpec.describe EdLink::Base do
         end
 
         it "raises EdLink::#{status[1]}" do
-          expect{ EdLink::Base.handle_errors(response: response)}.to raise_error{ |error|
+          expect{ EdLink::GraphBase.handle_errors(response: response)}.to raise_error{ |error|
             expect(error).to be_a(exception)
             expect(error.errors).to eq(json[:$errors])
             expect(error.headers).to eq(headers)
@@ -45,7 +45,7 @@ RSpec.describe EdLink::Base do
     let(:cursor) { '622bea99-3bdd-4bdc-8e55-6f87bed32dfe' }
     let(:method) { :get }
     let(:params) do
-      { query: { '$cursor' => cursor } }
+      { cursor: cursor }
     end
     let(:path) { "/schools" }
     let(:url) do
@@ -54,18 +54,16 @@ RSpec.describe EdLink::Base do
 
     context 'when the url is valid' do
       it 'requests the next page of data' do
-        expect(EdLink::Base).to receive(:request).with(method: method, path: path, params: params)
-        EdLink::Base.next(method: method, url: "#{url}?$cursor=#{cursor}")
+        expect(EdLink::GraphBase).to receive(:request).with(method: method, path: path, params: params)
+        EdLink::GraphBase.next(method: method, url: "#{url}?$cursor=#{cursor}")
       end
     end
 
     context 'when the "first" params is included' do
       let(:params) do
         { 
-          query: {
-            '$cursor' => cursor,
-            '$first' => 1
-          }
+          cursor: cursor,
+          first: 1,
         }
       end
       let(:input_params) do
@@ -73,8 +71,8 @@ RSpec.describe EdLink::Base do
       end
 
       it 'requests the next page of data' do
-        expect(EdLink::Base).to receive(:request).with(method: method, path: path, params: params)
-        EdLink::Base.next(method: method, url: "#{url}?$cursor=#{cursor}", params: input_params)
+        expect(EdLink::GraphBase).to receive(:request).with(method: method, path: path, params: params)
+        EdLink::GraphBase.next(method: method, url: "#{url}?$cursor=#{cursor}", params: input_params)
       end
     end
 
@@ -83,7 +81,7 @@ RSpec.describe EdLink::Base do
 
       it 'raises an ArgumentError' do
         expect{
-            EdLink::Base.next(method: method, url: url)
+            EdLink::GraphBase.next(method: method, url: url)
           }.to raise_error(ArgumentError, "Expected \"method\" param to be a Symbol, got #{method.class}.")
       end
     end
@@ -93,7 +91,7 @@ RSpec.describe EdLink::Base do
 
       it 'raises an ArgumentError' do
         expect{
-            EdLink::Base.next(method: method, url: url)
+            EdLink::GraphBase.next(method: method, url: url)
           }.to raise_error(ArgumentError, "Expected \"url\" param to be a String, got #{url.class}.")
       end
     end
@@ -103,7 +101,7 @@ RSpec.describe EdLink::Base do
 
       it 'raises an ArgumentError' do
         expect{
-            EdLink::Base.next(method: method, url: url)
+            EdLink::GraphBase.next(method: method, url: url)
           }.to raise_error(ArgumentError, 'Expected "url" to have a "$cursor" query param.')
       end
     end
@@ -113,7 +111,7 @@ RSpec.describe EdLink::Base do
 
       it 'raises an ArgumentError' do
         expect{
-            EdLink::Base.next(method: method, url: url)
+            EdLink::GraphBase.next(method: method, url: url)
           }.to raise_error(ArgumentError, 'Expected "url" to have a "$cursor" query param.')
       end
     end
@@ -127,8 +125,18 @@ RSpec.describe EdLink::Base do
     context 'when access token is not configured' do
       it 'raises a ConfigurationError' do
         expect{
-          EdLink::Base.request(method: method, path: path, params: params)
+          EdLink::GraphBase.request(method: method, path: path, params: params)
         }.to raise_error(EdLink::ConfigurationError)
+      end
+    end
+
+    context 'when access token is passed as a param' do
+      let(:params) { { access_token: 'FAKE-TOKEN' } }
+
+      it 'does not raises the ConfigurationError' do
+        expect{
+          EdLink::GraphBase.request(method: method, path: path, params: params)
+        }.not_to raise_error(EdLink::ConfigurationError)
       end
     end
 
@@ -191,7 +199,7 @@ RSpec.describe EdLink::Base do
 
         it 'raises an error' do
           expect{
-            EdLink::Base.request(method: method, path: path, params: params)
+            EdLink::GraphBase.request(method: method, path: path, params: params)
           }.to raise_error(EdLink::BadRequestError, "#{message} (1/1 errors)")
         end
       end
@@ -204,7 +212,7 @@ RSpec.describe EdLink::Base do
         end
 
         it 'returns the API response' do
-          expect(EdLink::Base.request(method: method, path: path, params: params)).to eq(payload)
+          expect(EdLink::GraphBase.request(method: method, path: path, params: params)).to eq(payload)
         end
       end
 
@@ -221,7 +229,7 @@ RSpec.describe EdLink::Base do
         end
 
         it 'adds expand to the query params' do
-          expect(EdLink::Base.request(method: method, path: path, params: params)).to eq(payload)
+          expect(EdLink::GraphBase.request(method: method, path: path, params: params)).to eq(payload)
         end
       end
 
@@ -235,7 +243,7 @@ RSpec.describe EdLink::Base do
 
         it 'raises and ArgumentError' do
           expect{
-            EdLink::Base.request(method: method, path: path, params: params)
+            EdLink::GraphBase.request(method: method, path: path, params: params)
           }.to raise_error(ArgumentError, "Expected \"expand\" param to be a String, got #{bad_type.class}.")
         end
       end
@@ -253,7 +261,7 @@ RSpec.describe EdLink::Base do
         end
 
         it 'adds fields to the query params' do
-          expect(EdLink::Base.request(method: method, path: path, params: params)).to eq(payload)
+          expect(EdLink::GraphBase.request(method: method, path: path, params: params)).to eq(payload)
         end
       end
 
@@ -267,7 +275,7 @@ RSpec.describe EdLink::Base do
 
         it 'raises and ArgumentError' do
           expect{
-            EdLink::Base.request(method: method, path: path, params: params)
+            EdLink::GraphBase.request(method: method, path: path, params: params)
           }.to raise_error(ArgumentError, "Expected \"fields\" param to be a String, got #{bad_type.class}.")
         end
       end
@@ -294,7 +302,7 @@ RSpec.describe EdLink::Base do
         end
 
         it 'adds filter to the query params' do
-          expect(EdLink::Base.request(method: method, path: path, params: params)).to eq(payload)
+          expect(EdLink::GraphBase.request(method: method, path: path, params: params)).to eq(payload)
         end
       end
 
@@ -306,7 +314,7 @@ RSpec.describe EdLink::Base do
 
         it 'raises and ArgumentError' do
           expect{
-            EdLink::Base.request(method: method, path: path, params: params)
+            EdLink::GraphBase.request(method: method, path: path, params: params)
           }.to raise_error(ArgumentError, "Expected \"filter\" param to be a Hash, got #{bad_type.class}.")
         end
       end
@@ -324,7 +332,7 @@ RSpec.describe EdLink::Base do
         end
 
         it 'adds first to the query params' do
-          expect(EdLink::Base.request(method: method, path: path, params: params)).to eq(payload)
+          expect(EdLink::GraphBase.request(method: method, path: path, params: params)).to eq(payload)
         end
       end
 
@@ -336,7 +344,7 @@ RSpec.describe EdLink::Base do
 
         it 'raises and ArgumentError' do
           expect{
-            EdLink::Base.request(method: method, path: path, params: params)
+            EdLink::GraphBase.request(method: method, path: path, params: params)
           }.to raise_error(ArgumentError, "Expected \"first\" param to be a Integer, got #{bad_type.class}.")
         end
       end
@@ -367,7 +375,7 @@ RSpec.describe EdLink::Base do
         end
 
         it 'adds filter to the query params' do
-          expect(EdLink::Base.request(method: method, path: path, params: params)).to eq(payload)
+          expect(EdLink::GraphBase.request(method: method, path: path, params: params)).to eq(payload)
         end
       end
     end
