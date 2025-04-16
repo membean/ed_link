@@ -13,7 +13,10 @@ module EdLink
     class << self
       def handle_errors(response:)
         error_type = parse_errors(response: response)
-        errors = JSON.parse(response.body).deep_symbolize_keys[:$errors]
+        json = JSON.parse(response.body).deep_symbolize_keys
+        # Some error responses, such as 401 Unauthorized, have an $error
+        # key (singular) instead of an $errors key (plural).
+        errors = json[:$errors] || json[:$error]
         headers = response.headers
         raise "EdLink::#{error_type}".constantize.new(errors, headers)
       end
@@ -50,6 +53,8 @@ module EdLink
         case response.code.to_i
         when 400
           'BadRequestError'
+        when 401
+          'UnauthorizedError'
         when 403
           'PermissionError'
         when 404

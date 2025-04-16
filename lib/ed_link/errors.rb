@@ -20,7 +20,11 @@ module EdLink
     def initialize(errors, headers)
       @errors = errors
       @headers = headers
-      message = "#{@errors.first[:message]} (1/#{@errors.length} errors)"
+      if @errors.is_a?(Array)
+        message = "#{@errors.first[:message]} (1/#{@errors.length} errors)"
+      else
+        message = "#{@errors} (1/1 errors)"
+      end
       super(message)
     end
   end
@@ -38,4 +42,6 @@ module EdLink
   class PermissionError < EdLinkError; end
 
   class RateLimitReachedError < EdLinkError; end
+
+  class UnauthorizedError < EdLinkError; end
 end

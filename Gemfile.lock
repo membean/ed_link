@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ed_link (0.1.0)
+    ed_link (0.0.2)
       activesupport (~> 6)
       httparty (~> 0.2)
 
