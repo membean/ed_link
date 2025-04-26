@@ -70,6 +70,8 @@ module EdLink
         return params if params == {}
 
         # Gets the value or assigns nil
+        after = params[:after]
+        before = params[:before]
         cursor = params[:cursor]
         expand = params[:expand]
         fields = params[:fields]
@@ -77,6 +79,8 @@ module EdLink
         first = params[:first]
 
         # Ensure params are in the correct format.
+        raise_argument_error(label: 'after', param: after, type: String) if after && after.class != String
+        raise_argument_error(label: 'before', param: before, type: String) if before && before.class != String
         raise_argument_error(label: 'cursor', param: expand, type: String) if cursor && cursor.class != String
         raise_argument_error(label: 'expand', param: expand, type: String) if expand && expand.class != String
         raise_argument_error(label: 'fields', param: fields, type: String) if fields && fields.class != String
@@ -84,6 +88,10 @@ module EdLink
         raise_argument_error(label: 'first', param: first, type: Integer)if first && first.class != Integer
           
         compiled = {}
+        # Add the after param if present.
+        compiled.merge!({ '$after' => params[:after] }) if after.present?
+         # Add the before param if present.
+         compiled.merge!({ '$before' => params[:before] }) if before.present?
         # Add the cursor param if present.
         compiled.merge!({ '$cursor' => params[:cursor] }) if cursor.present?
         # Add the expand param if present.
