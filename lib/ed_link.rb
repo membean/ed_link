@@ -15,6 +15,7 @@ require_relative 'ed_link/district'
 require_relative 'ed_link/enrollment'
 require_relative 'ed_link/errors'
 require_relative 'ed_link/people'
+require_relative 'ed_link/period'
 require_relative 'ed_link/school'
 require_relative 'ed_link/session'
 
