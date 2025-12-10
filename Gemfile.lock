@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    ed_link (0.0.5)
-      activesupport (~> 7)
-      csv (~> 3)
+    ed_link (0.0.6)
+      activesupport (>= 7)
+      csv (>= 3)
       httparty (~> 0.2)
 
 GEM
