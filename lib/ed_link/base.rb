@@ -38,7 +38,8 @@ module EdLink
       end
 
       def request(method:, path:, params: {})
-        headers({ 'Authorization': "Bearer #{EdLink.configuration.access_token}" })
+        token = EdLink::Current.access_token || EdLink.configuration.access_token
+        headers({ 'Authorization': "Bearer #{token}" })
         params = parse_params(params: params)
         response = self.send(method.to_s, path, params)
         json = JSON.parse(response.body).deep_symbolize_keys

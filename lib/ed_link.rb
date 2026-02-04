@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
+require 'active_support'
 require 'active_support/core_ext/hash/keys'
 require 'active_support/core_ext/string/inflections'
+require 'active_support/current_attributes'
 require 'httparty'
 require 'json'
 
 require_relative 'ed_link/configuration'
+require_relative 'ed_link/current'
 require_relative 'ed_link/version'
 
 require_relative 'ed_link/base'
